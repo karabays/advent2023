@@ -38,21 +38,47 @@ def test_result(game):
         else:
             binary.append(False)
     if all(binary):
-        print(game)
         return int(game['game'].split()[1])
     
 
+def part1(games_list):
+    game_numbers = []
+    for line in games_list:
+        game = parse_game(line)
+        if test_result(game):
+            game_numbers.append(test_result(game))
+    print(f'Part 1: {sum(game_numbers)}')
+
+def find_min_set(game):
+    blues = []
+    reds = []
+    greens = []
+    for draw in game['draws']:
+        blues.append(draw.get('blue',0))
+        reds.append(draw.get('red',0))
+        greens.append(draw.get('green',0))
+    result = {"blue": max(blues),
+            "red": max(reds),
+            "green": max(greens)}
+
+    return result['blue']*result['red']*result['green']
+
+def part2(games_list):
+    min_games = []
+    for line in games_list:
+        game = parse_game(line)
+        min_set = find_min_set(game)
+        min_games.append(min_set)
+    print(min_games)
+    print(sum(min_games))
 
 
 
 def main():
     games_text = load_file("adv02/input.txt")
-    game_numbers = []
-    for line in games_text:
-        game = parse_game(line)
-        if test_result(game):
-            game_numbers.append(test_result(game))
-    print(sum(game_numbers))
+    part1(games_text)
+    part2(games_text)
+    
 
 
 main()
