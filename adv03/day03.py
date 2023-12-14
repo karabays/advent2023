@@ -39,7 +39,7 @@ def get_grid(lines):
 
 
 def part1():
-    lines = load_file('adv03/input.txt')
+    lines = load_file('input.txt')
     grid = get_grid(lines)
     numbers = []
     for idx, line in enumerate(lines):
@@ -56,8 +56,21 @@ def part1():
 
     print(sum(codes))
 
+def find_asterix(idx, line):
+    asterixes = [m for m in re.finditer('\*', line)]
+    result = []
+    for ast in asterixes:
+        r = {}
+        r['loc'] = (ast.start(), idx)
+        result.append(r)
+    return result 
 
+def part2():
+    lines = load_file('input.txt')
+    grid = get_grid(lines)
+    asterixes = []
+    for idx, line in enumerate(lines):
+        asterixes.extend(find_asterix(idx, line))
+    print(asterixes)
+part2()
 
-
-
-part1()
