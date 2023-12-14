@@ -30,6 +30,12 @@ def get_neighbours(number):
         #print(number, neighbours)
         return neighbours
 
+def get_space(number):
+    space = []
+    for i in range(number['start'][0], number['end'][0]):
+            space.append((i,number['start'][1]))
+    return space
+
 def get_grid(lines):
     grid = {}
     for idy, line in enumerate(lines):
@@ -60,17 +66,49 @@ def find_asterix(idx, line):
     asterixes = [m for m in re.finditer('\*', line)]
     result = []
     for ast in asterixes:
+        x = ast.start()
+        y = idx
         r = {}
-        r['loc'] = (ast.start(), idx)
+        r['ast'] = (x, y)
+        r['neighbours'] = [(x-1,y-1),(x,y-1),(x+1,y-1),
+                           (x-1,y),(x+1,y),
+                           (x-1,y+1),(x,y+1),(x+1,y+1)]
         result.append(r)
-    return result 
+    return result
 
 def part2():
-    lines = load_file('input.txt')
+    lines = load_file('adv03/input.txt')
     grid = get_grid(lines)
     asterixes = []
     for idx, line in enumerate(lines):
         asterixes.extend(find_asterix(idx, line))
-    print(asterixes)
+
+
+    numbers = []
+    for idx, line in enumerate(lines):
+        numb = find_numbers(idx, line)
+        numbers.extend(numb)
+
+    for n in numbers:
+        n['space'] = get_space(n)
+
+
+    addresses = {}
+    for m in numbers:
+        for s in m['space']:
+            addresses[s] = m['number']
+
+    #print(addresses)
+
+    ratios = []
+    for ast in asterixes:
+            numbers_found = set([addresses.get(n) for n in ast['neighbours']])
+            ratio = [q for q in numbers_found if q]
+            if len(ratio) > 1:
+                ratios.append(ratio)
+    
+    result = [r[0] * r [1] for r in ratios]
+    print(sum(result))
+
 part2()
 
